@@ -33,4 +33,5 @@ if you only have the r command line interpreter:
   This will launch the app on localhost on a random port and attempt to open your browser.
 
 if you have the full RStudio environment:
-  simply click Run App 
+  select file server.R 
+  click Run App in top right corner 
