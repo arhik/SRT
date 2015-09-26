@@ -20,7 +20,8 @@ R version >= 3.0
 shiny  R Package
 gdata R Package
 ggplot2 R Package
-These can be resolved using the install.Packages() function from the R command Line
+rootSolve R Package
+These can be resolved using the install.packages() function from the R command Line
 
 To Run:
 Clone this git
