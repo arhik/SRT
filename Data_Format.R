@@ -2,12 +2,12 @@
 failureT_to_interF <- function(failure_T)
 {
 
-interfailure <- c()
+interfailure <- c() #Initialize the interfailure vector
 interfailure[1] = failure_T[1] #initial value for failure time
 
 n = 2
 
-while(n<=length(failure_T))
+while(n<=length(failure_T)) #fills the interfailure vector with values
 {
   interfailure[n] = failure_T[n] - failure_T[n-1]
    
@@ -18,7 +18,6 @@ return(interfailure)#return failure times(failure_T)
 }
 
 
-#george
 
 
 #################################
@@ -29,13 +28,13 @@ interF_to_failureT <- function(interfailure) #interfailure to failure times
 {
 
 
-   failure_T <- c()
+   failure_T <- c() #initialize failure time vector
 
    failure_T[1] = interfailure[1] #initial value for failure time
 
 n = 2
 
-while(n<=length(interfailure))
+while(n<=length(interfailure)) #fills the failure time vector with values
 {
   failure_T[n] = interfailure[n] + failure_T[n-1]
   
@@ -57,7 +56,7 @@ return(failure_T)#return interfailure times(interfailure)
 
 failureC_to_failureT <- function(time_vec,num_count) #failure count to failure time
 {
-  failure_T <- c()
+  failure_T <- c() #initialize failure time vector
   time_vec<- c(0,time_vec)
   m <- 1
   for(j in 1:(length(time_vec)-1))
@@ -66,12 +65,12 @@ failureC_to_failureT <- function(time_vec,num_count) #failure count to failure t
     {
       if(num_count[j]!=0)
       {
-        failure_T[m] <- time_vec[j]+ ((i-0.5)*((time_vec[j+1]-time_vec[j])/num_count[j]))
+        failure_T[m] <- time_vec[j]+ ((i-0.5)*((time_vec[j+1]-time_vec[j])/num_count[j])) #fill failure time vectors with values
         m <- m+1
       }
     }
   }
-  return(failure_T)
+  return(failure_T) #returns the failure time vector
 }
 
 CumulativeFailureC_to_failureC <- function(x){
