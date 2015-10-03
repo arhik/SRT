@@ -3,11 +3,12 @@
 
 #Define n, tn and sumT
 
+#Goel-Okumoto Bisector Method  Maximum Likelyhood Estimate
 GO_BM_MLE <- function(x){
 n <- length(x)
-tn <- x[n]
+tn <- x[n]  #---->unclear variable names
 sumT <- sum(x)
-#print("GO_BM_R\n")
+
 #Define MLE of parameter 'b'
 GO_MLEeq<-function(b){
 	((n*tn*exp(-b*tn))/(1-exp(- b*tn)))+sumT - n/b 
@@ -15,15 +16,15 @@ GO_MLEeq<-function(b){
 
 #Step-1: Determine initial parameter estimate for parameter 'b'
 
-b0 <- n/sumT
+b0 <- n/sumT # calculates initial guess 
 
 #Step-2: Bracket root
-
+#If this does not bracket the function in 100 iterations then nonconvergence
 i <- 0 
 maxIterations <- 100
-leftEndPoint <- b0/2
+leftEndPoint <- b0/2 #sets left to less than initial guess
 leftEndPointMLE <- GO_MLEeq(leftEndPoint)
-rightEndPoint <- 1.2*b0
+rightEndPoint <- 1.2*b0 #sets right to more than initial guess
 rightEndPointMLE <- GO_MLEeq(rightEndPoint)
 
 while(leftEndPointMLE*rightEndPointMLE > 0 & i <= maxIterations){
@@ -42,10 +43,10 @@ if(leftEndPointMLE*rightEndPointMLE > 0 ){
 } else {
 
 maxiter <<- 20
-  soln <- function(maxiter){
+  soln <- function(maxiter){  #?--->why are soln and sol used as variables; not very meaningful
     sol <- tryCatch(
       uniroot(GO_MLEeq, c(leftEndPoint,rightEndPoint), maxiter=maxiter, tol=1e-10, extendInt="yes")$root,
-      warning = function(w){
+      warning = function(w){ #what is w
       #print(f.lower)
         if(length(grep("_NOT_ converged",w[1]))>0){
           maxiter <<- maxiter+1 
@@ -54,10 +55,11 @@ maxiter <<- 20
         }
       },
       error = function(e){
-        print(e)
+        print(e) #what is e 
+        #will this print to the console instead of shiny
         #return(e)
       })
-    sol
+    return(sol)
   }
   bMLE <- soln(maxiter)
 	#bMLE <- uniroot(GO_MLEeq,lower=leftEndPoint,upper=rightEndPoint, tol = 1e-10, maxiter=2000)$root
@@ -72,7 +74,7 @@ maxiter <<- 20
    sol <- data.frame("GO_aMLE"=aMLE,"GO_bMLE"=bMLE)
 	 # sol <- c(aMLE,bMLE)
 
-	 sol
+	 return(sol) #sol is a set of aMLE and bMLE
 }
 
 # GO_MVF_er <- function(param,d){
@@ -110,10 +112,12 @@ maxiter <<- 20
 #   names(g) <- c("Time","Failure")
 #   g
 # }
-GO_MVF <- function(param,d){
+
+##Goel-Okumoto Mean Value Function
+GO_MVF <- function(param,d){ #?----->what is d
   #param$aMLE <- 100
-  n <- length(d$FT)
-  r <- data.frame()
+  n <- length(d$FT) #?---->why not call this dLength instead of a meaningless n
+  r <- data.frame() #?---->what is r?
   print(param)
   #t_index <- seq(0,9000,1)
   # param$aMLE <- 142.8809
@@ -126,9 +130,9 @@ GO_MVF <- function(param,d){
   }
   r <- data.frame(r[1],r[2],r[3])
   names(r) <- c("Time","Failure","Model")
-  r
+  return(r)
 }
-
+#Goel-Okumoto Mean ttime to Failure
 GO_MTTF <- function(params,d){
   n <- length(d$FT)
   r <-data.frame()
@@ -140,9 +144,10 @@ GO_MTTF <- function(params,d){
     }
   r <- data.frame(r[1],r[2],r[3])
   names(r) <- c("Failure_Number","MTTF","Model")
-  r
+  return(r)
 }
 
+#?---->Goel Okumoto failure intensity? failure rate?
 GO_FI <- function(params,d){
   n <- length(d$FT)
   r <-data.frame()
@@ -154,12 +159,12 @@ GO_FI <- function(params,d){
     }
   r <- data.frame(r[1],r[2],r[3])
   names(r) <- c("Failure_Count","Failure_Rate","Model")
-  r
+  return(r)
 
 }
 
 
-
+#Goel Okumoto Reliability
 GO_R <- function(params,d){
   n <- length(d$FT)
   r <-data.frame()
@@ -171,9 +176,10 @@ GO_R <- function(params,d){
   }
   r <- data.frame(r[1],r[2],r[3])
   names(r) <- c("Time","Reliability","Model")
-  r
+  return(r)
 }
 
+#GO log likelyhood
 GO_lnL <- function(x,params){
   n <- length(x)
   tn <- x[n]
@@ -182,29 +188,33 @@ GO_lnL <- function(x,params){
     firstSumTerm = firstSumTerm + (-params$GO_bMLE*x[i])
   }
   lnL <- -(params$GO_aMLE)*(1-exp(-params$GO_bMLE*tn)) + n*(log(params$GO_aMLE)) +n*log(params$GO_bMLE) + firstSumTerm
-  lnL
+  return(lnL)
 }
 
+#?--->GO_MVF continued?, continuous?
 GO_MVF_cont <- function(params,t){
   return(params$GO_aMLE*(1-exp(-params$GO_bMLE*t)))
 }
 
+#GO Reliability change
 GO_R_delta <- function(params,cur_time,delta){
   return(exp(-(GO_MVF_cont(params,(cur_time+delta)) -GO_MVF_cont(params,cur_time))))
 }
 
+#GO Reliability Max Likelyhood equation root finder 
 GO_R_MLE_root <- function(params,cur_time,delta, reliability){
   root_equation <- reliability - exp(params$GO_aMLE*(1-exp(-params$GO_bMLE*cur_time)) -params$GO_aMLE*(1-exp(-params$GO_bMLE*(cur_time+delta))))
   return(root_equation)
 }
 
 maxiter <- 1000
+#runs GO model until given reliability and rerturns time
 GO_Target_T <- function(params,cur_time,delta, reliability){
 
   f <- function(t){
     return(GO_R_MLE_root(params,t,delta, reliability))
   }
-
+    #works in a similar way to the regular MLE function but with reliability as the key parameter
   current_rel <- GO_R_delta(params,cur_time,delta)
   if(current_rel < reliability){
       sol <- tryCatch(
@@ -214,7 +224,7 @@ GO_Target_T <- function(params,cur_time,delta, reliability){
           if(length(grep("_NOT_ converged",w[1]))>0){
             maxiter <<- maxiter+10
             print(paste("recursive", maxiter,sep='_'))
-            GO_Target_T(a,b,cur_time,delta, reliability)
+            GO_Target_T(a,b,cur_time,delta, reliability) #calls self recursively until converges or max interations
           }
         },
         error = function(e){
@@ -225,9 +235,9 @@ GO_Target_T <- function(params,cur_time,delta, reliability){
   else {
     sol <- "Target reliability already achieved"
   }
-    sol
+    return(sol)
   }
-
+#GO reliability growth model
 GO_R_growth <- function(params,cur_time,delta, reliability){  
   
   r <-data.frame()
@@ -236,7 +246,7 @@ GO_R_growth <- function(params,cur_time,delta, reliability){
       r[i,1] <- tt_index[i]
       temp <- GO_R_delta(params,tt_index[i],delta)
       #print(typeof(temp))
-      if(typeof(temp) != typeof("character")){
+      if(typeof(temp) != typeof("character")){ #if calculated number is not a charatcer then return NA
         r[i,2] <- temp
         r[i,3] <- "GO"
       }
@@ -248,7 +258,7 @@ GO_R_growth <- function(params,cur_time,delta, reliability){
     g <- data.frame(r[1],r[2],r[3])
     names(g) <- c("Time","Reliability_Growth","Model")
     #print(g)
-    g
+    return(g)
       
 }
 
