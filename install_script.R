@@ -18,8 +18,8 @@ if (version$major < 3 || (version$major == 3 && version$minor < 2.2)){ #checks i
 }
 
 #checks for each dependancy and loads or installs then loads
-if(!require(shiny)) {install.packages("shiny");require(shiny)}
-if(!require(gdata)) {install.packages("gdata");require(gdata)}
-if(!require(ggplot2)) {install.packages("ggplot2");require(ggplot2)}
-if(!require(rootSolve)) {install.packages("rootSolve");require(rootSolve)}
+if(!require(shiny)) {install.packages("shiny");require(shiny)} #shiny is the main interface package
+if(!require(gdata)) {install.packages("gdata");require(gdata)} #gdata is used for manipulating the data out of an excel sheet
+if(!require(ggplot2)) {install.packages("ggplot2");require(ggplot2)} #ggplot2 is used for crerating various plots
+if(!require(rootSolve)) {install.packages("rootSolve");require(rootSolve)} #rootSolve is used for finding a root of an equation
 
