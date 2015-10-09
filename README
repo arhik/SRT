@@ -20,7 +20,8 @@ R version >= 3.0
 shiny  R Package
 gdata R Package
 ggplot2 R Package
-These can be resolved using the install.Packages() function from the R command Line
+rootSolve R Package
+These can be resolved using the install.packages() function from the R command Line
 
 To Run:
 Clone this git
@@ -32,4 +33,5 @@ if you only have the r command line interpreter:
   This will launch the app on localhost on a random port and attempt to open your browser.
 
 if you have the full RStudio environment:
-  simply click Run App 
+  select file server.R 
+  click Run App in top right corner 
