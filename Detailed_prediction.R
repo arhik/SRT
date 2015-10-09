@@ -1,32 +1,32 @@
 # Detailed prediction
-get_prediction_n <- function(x,t,n){
+get_prediction_n <- function(x,t,n){ #get prediction function
 
 	total_time <- 0
 	print("Inside function")
-	print(t)
+	print(t) #output time
 	i <- 0
-	if('JM_N0' %in% names(x)){
+	if('JM_N0' %in% names(x)){ #if JM is in names
 		while( total_time < t){
 			i <- i + 1
-			total_time <- (1/(x$JM_Phi*(x$JM_N0-(t+i-1)))) + total_time
+			total_time <- (1/(x$JM_Phi*(x$JM_N0-(t+i-1)))) + total_time #assign total time
 			if(total_time > t){
 				i <- i - 1 
 			}			
 		}
 	}
-	else if('GM_D0' %in% names(x)){
+	else if('GM_D0' %in% names(x)){ #if GM is in names
 		while( total_time < t){
 			i <- i +1
-			total_time <- (1/(x$GM_D0*(x$GM_Phi)^(t+i-1))) + total_time
+			total_time <- (1/(x$GM_D0*(x$GM_Phi)^(t+i-1))) + total_time #set total time
 			if(total_time > t){
 				i <- i - 1 
 			}	
 		}
 	}
-	else if('GO_aMLE' %in% names(x)){
+	else if('GO_aMLE' %in% names(x)){ #if GO is in names
 			while(total_time < t){
 				i <- i +1
-				total_time <- (1/(x$GO_aMLE*(x$GO_bMLE)^(t+i-1))) + total_time
+				total_time <- (1/(x$GO_aMLE*(x$GO_bMLE)^(t+i-1))) + total_time #set total time
 				if(total_time > t){
 					i <- i - 1 
 				}	
@@ -38,15 +38,15 @@ get_prediction_n <- function(x,t,n){
 	i	
 }
 
-get_prediction_t <- function(x,steps,n){
+get_prediction_t <- function(x,steps,n){ #get prediction function
 	t <-0
-	time_indexes <- c()
+	time_indexes <- c() #initialize time indexes array 
 	if('JM_N0' %in% names(x)){
 		t <- 0
 		if(steps!=0){
 			for(i in 1:steps){
 				if((x$JM_N0 - n)>=i){
-					t <- (1/(x$JM_Phi*(x$JM_N0-(n+i-1)))) + t
+					t <- (1/(x$JM_Phi*(x$JM_N0-(n+i-1)))) + t #set t
 					time_indexes[i] <- t
 				}
 				else{
